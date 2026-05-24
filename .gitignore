@@ -3,4 +3,5 @@ assets/
 __pycache__/
 *.pyc
 *.pkl
+!notebooks/modelo_rf_lite.pkl
 .claude/launch.json

@@ -18,7 +18,10 @@ st.set_page_config(
     initial_sidebar_state="collapsed",
 )
 
-MODEL_PATH = os.path.join(os.path.dirname(__file__), 'modelo_rf.pkl')
+_BASE = os.path.dirname(os.path.abspath(__file__))
+_LITE = os.path.join(_BASE, 'modelo_rf_lite.pkl')
+_FULL = os.path.join(_BASE, 'modelo_rf.pkl')
+MODEL_PATH = _LITE if os.path.exists(_LITE) else _FULL
 
 # ── Carga del modelo (cacheado) ───────────────────────────────────────────────
 @st.cache_resource(show_spinner="Cargando modelo Random Forest...")
@@ -31,7 +34,10 @@ def load_artifact():
 artifact = load_artifact()
 
 if artifact is None:
-    st.error("No se encontro modelo_rf.pkl. Ejecuta primero: `python notebooks/08_modelo_random_forest.py`")
+    st.error(
+        "No se encontro modelo_rf_lite.pkl ni modelo_rf.pkl. "
+        "Ejecuta primero: `python notebooks/10_entrenar_modelo_ligero.py`"
+    )
     st.stop()
 
 model    = artifact['model']
