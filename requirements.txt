@@ -1,0 +1,18 @@
+# ── SIS Cajamarca ML — dependencias ─────────────────────────────────────────
+# Dashboard (09_dashboard.py)
+streamlit==1.57.0
+plotly==6.7.0
+
+# Modelo y datos
+scikit-learn==1.8.0
+pandas==3.0.3
+numpy==2.4.6
+joblib==1.5.3
+scipy==1.17.1
+
+# Carga a Supabase (REST API)
+requests==2.34.2
+python-dotenv==1.2.2
+
+# Conexion directa PostgreSQL (opcional — 08b_storage_y_predicciones.py)
+psycopg2-binary==2.9.12
