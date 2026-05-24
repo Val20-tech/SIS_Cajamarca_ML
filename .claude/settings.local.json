@@ -1,0 +1,35 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(New-Item -ItemType Directory -Force \"C:\\\\Users\\\\USUARIO\\\\Downloads\\\\SIS_Cajamarca_ML\\\\assets\")",
+      "PowerShell(New-Item -ItemType Directory -Force \"C:\\\\Users\\\\USUARIO\\\\Downloads\\\\SIS_Cajamarca_ML\\\\notebooks\")",
+      "PowerShell(New-Item -ItemType Directory -Force \"C:\\\\Users\\\\USUARIO\\\\Downloads\\\\SIS_Cajamarca_ML\\\\sql\\\\bronze\")",
+      "PowerShell(New-Item -ItemType Directory -Force \"C:\\\\Users\\\\USUARIO\\\\Downloads\\\\SIS_Cajamarca_ML\\\\sql\\\\silver\")",
+      "PowerShell(New-Item -ItemType Directory -Force \"C:\\\\Users\\\\USUARIO\\\\Downloads\\\\SIS_Cajamarca_ML\\\\sql\\\\gold\")",
+      "PowerShell(cd \"C:\\\\Users\\\\USUARIO\\\\Downloads\\\\SIS_Cajamarca_ML\"; $env:PYTHONUNBUFFERED=\"1\"; python notebooks/06_gold_por_partes.py)",
+      "Bash(python notebooks/07_carga_gold.py)",
+      "Bash(python notebooks/08_modelo_random_forest.py)",
+      "Bash(pip install *)",
+      "PowerShell(Get-Content \"C:\\\\Users\\\\USUARIO\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-USUARIO-Downloads-SIS-Cajamarca-ML\\\\55784e30-c2c3-48e6-a31e-b256b78cdd1f\\\\tasks\\\\b336k56la.output\" -Wait -Tail 5)",
+      "Bash(python -c \"import sys; print\\(sys.version\\); import psycopg2; print\\('psycopg2 OK'\\)\")",
+      "Bash(python -c \"import psycopg; print\\('psycopg3 OK'\\)\")",
+      "Bash(python -c \"import plotly; print\\('plotly OK'\\)\")",
+      "Bash(python -c \"import streamlit; print\\('streamlit OK'\\)\")",
+      "Bash(python -c \"import sqlalchemy; print\\('sqlalchemy OK'\\)\")",
+      "Bash(python notebooks/08b_storage_y_predicciones.py)",
+      "PowerShell($f = \"C:\\\\Users\\\\USUARIO\\\\Downloads\\\\SIS_Cajamarca_ML\\\\notebooks\\\\modelo_rf.pkl\"; $size = \\(Get-Item $f\\).Length; Write-Host \"Tamanio pkl: $\\([math]::Round\\($size/1MB, 1\\)\\) MB \\($size bytes\\)\")",
+      "Bash(python -c ' *)",
+      "Bash(python -m streamlit run notebooks/09_dashboard.py --server.headless true --server.port 8501)",
+      "Bash(echo \"PID: $!\")",
+      "Bash(curl -s http://localhost:8501)",
+      "mcp__Claude_Preview__preview_start",
+      "Bash(curl -s http://localhost:8501/_stcore/health)",
+      "mcp__Claude_in_Chrome__tabs_context_mcp",
+      "mcp__Claude_in_Chrome__navigate",
+      "mcp__Claude_in_Chrome__computer",
+      "Bash(git init *)",
+      "Bash(git config *)",
+      "Bash(git add *)"
+    ]
+  }
+}

@@ -1,0 +1,6 @@
+assets/
+.env
+__pycache__/
+*.pyc
+*.pkl
+.claude/launch.json
