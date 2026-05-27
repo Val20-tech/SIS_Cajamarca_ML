@@ -4,17 +4,17 @@
 
 ---
 
-## 🔗 Links del proyecto
+## Links del proyecto
 
 | Recurso | URL |
 |---|---|
-| 📊 Dashboard interactivo (nube) | https://sis-cajamarca-ml.streamlit.app |
-| 🗄️ Base de datos (Supabase) | https://supabase.com — proyecto: `hnwsjrnzrvvzqnrahhis` |
-| 📂 Datos fuente (SIS) | https://www.datosabiertos.gob.pe |
+| Dashboard interactivo (nube) | https://sis-cajamarca-ml.streamlit.app |
+| Base de datos (Supabase) | https://supabase.com — proyecto: `hnwsjrnzrvvzqnrahhis` |
+| Datos fuente (SIS) | https://www.datosabiertos.gob.pe |
 
 ---
 
-## 📋 Resultados del modelo
+## Resultados del modelo
 
 | Métrica | Modelo completo (100 árboles) | Modelo lite (10 árboles) |
 |---|---|---|
@@ -39,7 +39,7 @@
 
 ---
 
-## 🏗️ Arquitectura del proyecto
+## Arquitectura del proyecto
 
 El proyecto usa la **Arquitectura Medallion** (Bronze → Silver → Gold):
 
@@ -59,7 +59,7 @@ Dashboard Streamlit (localhost:8501 o streamlit.app)
 
 ---
 
-## 📁 Estructura de archivos
+## Estructura de archivos
 
 ```
 SIS_Cajamarca_ML/
@@ -103,7 +103,7 @@ SIS_Cajamarca_ML/
 
 ---
 
-## ⚙️ Requisitos previos
+## Requisitos previos
 
 - Python 3.11 o superior
 - Cuenta en [Supabase](https://supabase.com) (gratuita)
@@ -111,7 +111,7 @@ SIS_Cajamarca_ML/
 
 ---
 
-## 🚀 Instalación paso a paso
+## Instalación paso a paso
 
 ### Paso 1 — Descargar el código
 ```bash
@@ -153,7 +153,7 @@ Guardarlos en la carpeta `assets/`.
 
 ---
 
-## ▶️ Ejecución del pipeline
+## Ejecución del pipeline
 
 Ejecutar los scripts en este orden desde PowerShell o terminal:
 
@@ -175,7 +175,7 @@ Abrir el navegador en: **http://localhost:8501**
 
 ---
 
-## 📊 El dashboard
+## El dashboard
 
 El dashboard tiene 3 pestañas:
 
@@ -195,7 +195,7 @@ python -m streamlit run notebooks/09_dashboard.py
 
 ---
 
-## 🗄️ Base de datos en Supabase
+## Base de datos en Supabase
 
 | Tabla | Esquema | Filas | Descripción |
 |---|---|---|---|
@@ -205,7 +205,7 @@ python -m streamlit run notebooks/09_dashboard.py
 
 ---
 
-## 🧠 El modelo Random Forest
+## El modelo Random Forest
 
 ### ¿Qué es Random Forest?
 Es un conjunto (ensemble) de 100 árboles de decisión. Cada árbol aprende patrones diferentes de los datos. La predicción final es el promedio de los 100 árboles.
@@ -238,7 +238,7 @@ RandomForestRegressor(
 
 ---
 
-## ❗ Problemas conocidos y soluciones
+## Problemas conocidos y soluciones
 
 | Problema | Causa | Solución |
 |---|---|---|
@@ -250,7 +250,7 @@ RandomForestRegressor(
 
 ---
 
-## 📦 Dependencias principales
+## Dependencias principales
 
 ```
 streamlit==1.57.0
@@ -266,7 +266,7 @@ Ver lista completa en `requirements.txt`.
 
 ---
 
-## 👥 Equipo
+## Equipo
 
 Proyecto desarrollado como parte del curso de Proyecto Productivo 2B — Instituto Continental, 2026.
 
@@ -282,6 +282,6 @@ Proyecto desarrollado como parte del curso de Proyecto Productivo 2B — Institu
 
 ---
 
-## 📄 Licencia
+## Licencia
 
 Proyecto académico — datos públicos del Ministerio de Salud del Perú (MINSA/SIS).
