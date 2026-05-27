@@ -1,7 +1,5 @@
 # SIS Cajamarca ML — Modelo Predictivo de Demanda Asistencial
 
-# SIS Cajamarca ML — Modelo Predictivo de Demanda Asistencial
-
 > Modelo de Machine Learning (Random Forest) para predecir la cantidad mensual de atenciones del Seguro Integral de Salud (SIS) por establecimiento, servicio, sexo y grupo de edad en la región Cajamarca, Perú (2023–2024).
 
 ---
