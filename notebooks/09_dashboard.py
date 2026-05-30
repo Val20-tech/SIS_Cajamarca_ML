@@ -19,7 +19,9 @@ st.set_page_config(
 )
 
 _BASE = os.path.dirname(os.path.abspath(__file__))
-MODEL_PATH = os.path.join(_BASE, 'modelo_rf.pkl')
+_FULL = os.path.join(_BASE, 'modelo_rf.pkl')
+_LITE = os.path.join(_BASE, 'modelo_rf_lite.pkl')
+MODEL_PATH = _FULL if os.path.exists(_FULL) else _LITE
 
 # ── Carga del modelo (cacheado) ───────────────────────────────────────────────
 @st.cache_resource(show_spinner="Cargando modelo Random Forest...")
@@ -32,8 +34,14 @@ def load_artifact():
 artifact = load_artifact()
 
 if artifact is None:
-    st.error("No se encontro modelo_rf.pkl. Ejecuta primero: `python notebooks/08_modelo_random_forest.py`")
+    st.error(
+        "No se encontro ningun modelo (modelo_rf.pkl ni modelo_rf_lite.pkl). "
+        "Ejecuta: `python notebooks/10_entrenar_modelo_ligero.py`"
+    )
     st.stop()
+
+_model_label = "RF completo (100 arboles)" if os.path.basename(MODEL_PATH) == 'modelo_rf.pkl' \
+               else "RF ligero (10 arboles)"
 
 model    = artifact['model']
 encoders = artifact['encoders']
@@ -81,7 +89,7 @@ MES_NOMBRES = {
 # ── Header ────────────────────────────────────────────────────────────────────
 st.title("SIS Cajamarca — Predictor de Demanda Asistencial")
 st.caption(
-    f"Modelo: **Random Forest Regressor** | "
+    f"Modelo: **Random Forest Regressor** ({_model_label}) | "
     f"Datos: {metrics['n_train'] + metrics['n_test']:,} combinaciones IPRESS/servicio/mes | "
     f"Entrenado con {metrics['n_train']:,} filas | "
     f"Evaluado con {metrics['n_test']:,} filas"
