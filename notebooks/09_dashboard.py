@@ -3,7 +3,7 @@
 Ejecutar: streamlit run notebooks/09_dashboard.py
 """
 
-import os, pickle
+import os, pickle, concurrent.futures
 import numpy as np
 import pandas as pd
 import streamlit as st
@@ -19,9 +19,7 @@ st.set_page_config(
 )
 
 _BASE = os.path.dirname(os.path.abspath(__file__))
-_LITE = os.path.join(_BASE, 'modelo_rf_lite.pkl')
-_FULL = os.path.join(_BASE, 'modelo_rf.pkl')
-MODEL_PATH = _LITE if os.path.exists(_LITE) else _FULL
+MODEL_PATH = os.path.join(_BASE, 'modelo_rf.pkl')
 
 # ── Carga del modelo (cacheado) ───────────────────────────────────────────────
 @st.cache_resource(show_spinner="Cargando modelo Random Forest...")
@@ -34,10 +32,7 @@ def load_artifact():
 artifact = load_artifact()
 
 if artifact is None:
-    st.error(
-        "No se encontro modelo_rf_lite.pkl ni modelo_rf.pkl. "
-        "Ejecuta primero: `python notebooks/10_entrenar_modelo_ligero.py`"
-    )
+    st.error("No se encontro modelo_rf.pkl. Ejecuta primero: `python notebooks/08_modelo_random_forest.py`")
     st.stop()
 
 model    = artifact['model']
@@ -45,6 +40,37 @@ encoders = artifact['encoders']
 features = artifact['features']
 cat_cols = artifact['cat_cols']
 metrics  = artifact['metrics']
+
+FEAT_LABELS = {
+    'anio': 'Año', 'mes': 'Mes', 'provincia': 'Provincia',
+    'ipress': 'IPRESS', 'nivel_eess': 'Nivel EESS',
+    'cod_servicio': 'Servicio', 'sexo': 'Sexo', 'grupo_edad': 'Grupo Edad',
+}
+
+# ── SHAP Explainer (cacheado una vez por sesion) ─────────────────────────────
+@st.cache_resource
+def load_shap_explainer(_model):
+    try:
+        import shap
+        return shap.TreeExplainer(_model), True
+    except Exception:
+        return None, False
+
+_explainer, _shap_ok = load_shap_explainer(model)
+
+def _fallback_contributions(row_vals, feats, encs, cat_feats, importances):
+    """Aproximacion: importancia x valor normalizado en [-1, 1]."""
+    refs = {'anio': (2023.5, 0.5), 'mes': (6.5, 5.5)}
+    contribs = []
+    for i, f in enumerate(feats):
+        v = float(row_vals[i])
+        if f in refs:
+            ref, rng = refs[f]
+        else:
+            n = len(encs[f].classes_)
+            ref, rng = (n - 1) / 2.0, max((n - 1) / 2.0, 1.0)
+        contribs.append(float(importances[i]) * (v - ref) / rng)
+    return np.array(contribs)
 
 MES_NOMBRES = {
     1:'Enero', 2:'Febrero', 3:'Marzo', 4:'Abril',
@@ -304,6 +330,75 @@ with tab3:
         ))
         fig_gauge.update_layout(height=280, margin=dict(l=30, r=30, t=40, b=10))
         st.plotly_chart(fig_gauge, use_container_width=True)
+
+        # ── Explicabilidad local ──────────────────────────────────────────────
+        st.markdown("---")
+        st.markdown("### Explicabilidad de esta prediccion")
+
+        use_shap  = False
+        contribs  = None
+
+        if _shap_ok and _explainer is not None:
+            with st.spinner("Calculando contribuciones SHAP..."):
+                with concurrent.futures.ThreadPoolExecutor(max_workers=1) as _pool:
+                    _fut = _pool.submit(_explainer.shap_values, X_new)
+                    try:
+                        _sv      = _fut.result(timeout=30)
+                        contribs = _sv[0] if not isinstance(_sv, list) else _sv[0][0]
+                        use_shap = True
+                    except concurrent.futures.TimeoutError:
+                        st.info("SHAP tardo mas de 30 s — usando aproximacion por importancia.")
+
+        if contribs is None:
+            contribs = _fallback_contributions(
+                row, features, encoders, cat_cols, model.feature_importances_
+            )
+
+        labels = [FEAT_LABELS.get(f, f) for f in features]
+        colors = ['#2ecc71' if c > 0 else '#e74c3c' for c in contribs]
+        method = "SHAP (TreeExplainer)" if use_shap else "Aproximacion (importancia × valor)"
+
+        # Grafico de barras de contribucion
+        fig_contrib = go.Figure(go.Bar(
+            x=labels,
+            y=contribs,
+            marker_color=colors,
+            text=[f'{c:+.4f}' for c in contribs],
+            textposition='outside',
+        ))
+        fig_contrib.update_layout(
+            title=f"Contribucion de cada variable a esta prediccion  ({method})",
+            xaxis_title="Variable",
+            yaxis_title="Contribucion",
+            height=420,
+            margin=dict(l=20, r=20, t=60, b=40),
+            plot_bgcolor='white',
+            yaxis=dict(zeroline=True, zerolinewidth=2, zerolinecolor='black'),
+        )
+        st.plotly_chart(fig_contrib, use_container_width=True)
+
+        # Mapa de calor de contribucion
+        fig_heat = go.Figure(go.Heatmap(
+            z=[list(contribs)],
+            x=labels,
+            y=['Contribucion'],
+            colorscale=[[0, '#e74c3c'], [0.5, 'white'], [1, '#2ecc71']],
+            zmid=0,
+            text=[[f'{c:+.4f}' for c in contribs]],
+            texttemplate='%{text}',
+            showscale=True,
+        ))
+        fig_heat.update_layout(
+            title="Mapa de calor de contribucion",
+            height=200,
+            margin=dict(l=20, r=20, t=50, b=20),
+        )
+        st.plotly_chart(fig_heat, use_container_width=True)
+
+        st.caption(
+            f"**Como leer esto:** barras verdes = variables que aumentan la prediccion, "
+            f"rojas = que la reducen. Metodo: {method}."
+        )
 
     st.markdown(
         "> **Nota:** El modelo fue entrenado con datos SIS Cajamarca 2023-2024 "
